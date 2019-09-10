@@ -3,5 +3,5 @@ $output = Import-PSSession $Session -DisableNameChecking -CommandName *ContentFi
 $list = (Get-ContentFilterConfig).BypassedSenders
 $list.remove($args[0])
 Set-ContentFilterConfig -BypassedSenders $list
-echo "Adres: $args[0] dodany do białej listy"
+echo "Adres: $args[0] usunięty z białej listy"
 Remove-PSSession $Session

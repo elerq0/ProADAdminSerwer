@@ -7,7 +7,7 @@ foreach ($tssrv in $tssrvArray) {
     $userName=$session[1]
     if($sessionId)
     {
-        #logoff $sessionId /server:$tssrv.kglsa.local  #LOGS USER OFF!!
+        logoff $sessionId /server:$tssrv.kglsa.local  #LOGS USER OFF!!
         echo "User: $userName was logged off"
         $login_status=1
         break
