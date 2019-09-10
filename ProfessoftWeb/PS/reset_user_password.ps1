@@ -1,0 +1,1 @@
+ Invoke-Command -ScriptBlock {Set-ADAccountPassword -Reset -Identity $args[0] -NewPassword (ConvertTo-SecureString -AsPlainText $args[1] -Force)} -ComputerName ADSrv 

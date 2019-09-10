@@ -1,0 +1,1 @@
+Invoke-Command -ScriptBlock {Get-ADUser -Filter * | Format-Table SamAccountName} -ComputerName ADSrv
