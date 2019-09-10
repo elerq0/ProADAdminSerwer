@@ -22,7 +22,7 @@ namespace ProfessoftWeb
 
         protected void Application_BeginRequest()
         {
-            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4200");
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://www");
             Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             if (Request.HttpMethod == "OPTIONS")
             {
