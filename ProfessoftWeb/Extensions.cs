@@ -19,6 +19,7 @@ namespace ProfessoftWeb
         public readonly static string resetUserPasswordPath = scriptsPath + "reset_user_password.ps1";
         public readonly static string resetUserSessionPath = scriptsPath + "reset_user_session.ps1";
         public readonly static string unlockUserPath = scriptsPath + "unlock_user.ps1";
+        public readonly static string logonHistoryUserPath = scriptsPath + "user_logon_history.ps1";
 
         public readonly static string listWhitelistDomainPath = scriptsPath + "list_whitelist_domains.ps1";
         public readonly static string addWhitelistDomainPath = scriptsPath + "add_whitelist_domain.ps1";
@@ -35,13 +36,22 @@ namespace ProfessoftWeb
             using (PowerShell ps = PowerShell.Create())
             {
                 string cmd = GetCommand(path, args);
+                Extensions.logFile.Write(cmd);
                 ps.AddScript(cmd);
-                col = ps.Invoke();
-                if (ps.Streams.Error.Count > 0)
+                try
                 {
-                    foreach (ErrorRecord err in ps.Streams.Error)
+                    col = ps.Invoke();
+
+                    if (ps.Streams.Error.Count > 0)
+                        throw new Exception("PS Error");
+                }
+                catch(Exception e)
+                {
+                    logFile.Write(e.Message);
+                    Collection<ErrorRecord> error = ps.Streams.Error.ReadAll();
+                    foreach (ErrorRecord err in error)
                     {
-                        logFile.Write(err.ErrorDetails.Message);
+                        logFile.Write(err.Exception.Message);
                     }
                     throw new Exception();
                 }

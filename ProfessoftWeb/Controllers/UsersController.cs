@@ -3,7 +3,7 @@ using System.Web.Mvc;
 
 namespace ProfessoftWeb.Controllers
 {
-    [Authorize]
+    
     public class UsersController : Controller
     {
         [HttpGet]
@@ -22,7 +22,6 @@ namespace ProfessoftWeb.Controllers
         public ActionResult Refresh()
         {
             Boolean result = Cache.users.Refresh();
-            Extensions.logFile.Write("Użytkownik [" + User.Identity.Name + "] odświeżył dane użytkowników z wynikiem = " + result);
 
             if (result)
                 return new HttpStatusCodeResult(200);
@@ -31,10 +30,10 @@ namespace ProfessoftWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult Unlock(string username)
+        public ActionResult Unlock()
         {
+            string username = Request.Form.Keys[0];
             Boolean result = Cache.users.UnlockAccount(username);
-            Extensions.logFile.Write("Użytkownik [" + User.Identity.Name + "] odblokował konto użytkownika [" + username + "] z wynikiem = " + result);
             
             if(result)
                 return new HttpStatusCodeResult(200);
@@ -43,10 +42,11 @@ namespace ProfessoftWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetPassword(string username, string password)
+        public ActionResult ResetPassword()
         {
+            string username = Request.Form.Keys[0];
+            string password = Request.Form.Keys[1];
             Boolean result = Cache.users.ResetPassword(username, password);
-            Extensions.logFile.Write("Użytkownik [" + User.Identity.Name + "] zresetował hasło użytkownika [" + username + "] z wynikiem = " + result);
 
             if (result)
                 return new HttpStatusCodeResult(200);
@@ -55,10 +55,10 @@ namespace ProfessoftWeb.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetSession(string username)
+        public ActionResult ResetSession()
         {
+            string username = Request.Form.Keys[0];
             Boolean result = Cache.users.ResetSession(username);
-            Extensions.logFile.Write("Użytkownik [" + User.Identity.Name + "] zresetował sesję użytkownika [" + username + "] z wynikiem = " + result);
 
             if (result)
                 return new HttpStatusCodeResult(200);
@@ -66,6 +66,11 @@ namespace ProfessoftWeb.Controllers
                 return new HttpStatusCodeResult(422);
         }
 
-        
+        [HttpGet]
+        public string GetStatus(string username)
+        {
+            //string username = Request.Form.Keys[0];
+            return Cache.users.GetStatus(username);
+        }
     }
 }

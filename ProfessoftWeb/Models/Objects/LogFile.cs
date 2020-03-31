@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace ProfessoftWeb.Models.Objects
 {
@@ -35,9 +36,11 @@ namespace ProfessoftWeb.Models.Objects
                     sw.Close();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw new Exception("Wystąpił bład przy zapisywaniu wiadomości do logu: " + e.Message);
+                //throw new Exception("Wystąpił bład przy zapisywaniu wiadomości do logu: " + e.Message);
+                Thread.Sleep(1000);
+                Write(msg);
             }
         }
 

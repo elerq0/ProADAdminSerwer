@@ -29,7 +29,7 @@ namespace ProfessoftWeb.Controllers
         }
 
         [HttpGet]
-        public string GetIdentity()
+        public string Identity()
         {
             return User.Identity.Name;
         }

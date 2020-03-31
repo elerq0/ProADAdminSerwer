@@ -6,11 +6,13 @@ using System.Management.Automation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
+
 namespace ProfessoftWeb.Models
 {
     public class Whitelist
     {
         public UInt32 version = 0;
+        protected string type = "";
         protected Collection<PSObject> collection;
 
         public Whitelist()
@@ -21,14 +23,17 @@ namespace ProfessoftWeb.Models
 
         public Boolean Refresh()
         {
+            Extensions.logFile.Write("Whitelist - Refresh " + type + " List");
             try
             {
                 BuildCollection();
                 version += 1;
+                Extensions.logFile.Write("       Completed Successfully");
                 return true;
             }
             catch (Exception)
             {
+                Extensions.logFile.Write("       Failed");
                 return false;
             }
         }
@@ -38,25 +43,44 @@ namespace ProfessoftWeb.Models
 
         public string GetPathsList()
         {
-            List<Objects.Address> list = new List<Objects.Address>();
-            foreach (PSObject psobject in collection)
+            Extensions.logFile.Write("Whitelist - Get " + type + " List");
+            try
             {
-
-                string path = GetPathRegex(psobject);
-                if (path == string.Empty)
-                    continue;
-
-                Objects.Address address = new Objects.Address
+                List<Objects.Address> list = new List<Objects.Address>();
+                foreach (PSObject psobject in collection)
                 {
-                    Path = path
-                };
+                    Objects.Address address;
+                    if (Extensions.debug)
+                        address = new Objects.Address
+                        {
+                            Path = psobject.Properties["ProcessName"].Value.ToString()
+                        };
+                    else
+                    {
+                        string path = GetPathRegex(psobject);
+                        if (path == string.Empty)
+                            continue;
 
-                list.Add(address);
+                        address = new Objects.Address
+                        {
+                            Path = path
+                        };
+                    }
+                    list.Add(address);
+                }
+
+                Extensions.logFile.Write("            Completed Successfully");
+                if (list.Count != 0)
+                    return JsonConvert.SerializeObject(list);
+                else
+                    return String.Empty;
             }
-            if (list.Count != 0)
-                return JsonConvert.SerializeObject(list);
-            else
-                return String.Empty;
+            catch (Exception e)
+            {
+                Extensions.logFile.Write("            Failed");
+                Extensions.logFile.Write(e.Message);
+                throw e;
+            }
         }
 
         private string GetPathRegex(PSObject psobject)
@@ -65,7 +89,7 @@ namespace ProfessoftWeb.Models
             {
                 string text = JsonConvert.SerializeObject(psobject, Formatting.Indented, new JsonConverter[] { new StringEnumConverter() });
 
-                Regex rx = new Regex(@"<S>([\w\.@-_*]*)<\/S>");
+                Regex rx = new Regex(@"<S>([\w\.@\-_*]*)<\/S>");
                 MatchCollection matches = rx.Matches(text);
                 if (matches.Count == 0)
                     return String.Empty;

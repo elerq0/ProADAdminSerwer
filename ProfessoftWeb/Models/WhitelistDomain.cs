@@ -10,6 +10,7 @@ namespace ProfessoftWeb.Models
     {
         public override void BuildCollection()
         {
+            type = "Domain";
             string[] args = new string[] { };
             if (Extensions.debug)
                 collection = Extensions.RunPowerShellScript(Extensions.listWhitelistMockPath, args);
@@ -19,30 +20,38 @@ namespace ProfessoftWeb.Models
 
         public Boolean Add(string domain)
         {
+            Extensions.logFile.Write("Whitelist - Add " + type);
+            Extensions.logFile.Write("            Domain = [" + domain + "]");
             try
             {
                 string[] args = new string[] { domain };
                 Extensions.RunPowerShellScript(Extensions.addWhitelistDomainPath, args);
                 Refresh();
+                Extensions.logFile.Write("            Completed Successfully");
                 return true;
             }
             catch (Exception)
             {
+                Extensions.logFile.Write("            Failed");
                 return false;
             }
         }
 
         public Boolean Remove(string domain)
         {
+            Extensions.logFile.Write("Whitelist - Remove " + type);
+            Extensions.logFile.Write("            Domain = [" + domain + "]");
             try
             {
                 string[] args = new string[] { domain };
                 Extensions.RunPowerShellScript(Extensions.removeWhitelistDomainPath, args);
                 Refresh();
+                Extensions.logFile.Write("            Completed Successfully");
                 return true;
             }
             catch (Exception)
             {
+                Extensions.logFile.Write("            Failed");
                 return false;
             }
         }
